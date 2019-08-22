@@ -51,3 +51,16 @@ generated), you can use the following form of command:
 ```
 $ ./wizard.sh serve website.com -f -c /path/to/certificate.crt -k /path/to/key.key
 ```
+
+### Logging
+
+At first, it might be a good idea to set supervisord's logging level to "debug"
+in [etc/supervisor/supervisord.conf](etc/supervisor/supervisord.conf). This will
+cause supervisord to write its managed processes' (Nginx's and uWSGI's) logs
+into its own. That way, when using the `-f` flag with `wizard.sh`, you can see
+Nginx and uWSGI logs as well (although admittedly they're a bit crowded in this
+format).
+
+Another option for looking at logs is to observe the volume holding the logs on
+the host which is somewhere in `/var/lib/docker/volumes` depending on the name
+you gave to `wizard.sh`.
