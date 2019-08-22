@@ -41,6 +41,7 @@ serve    spin up and start serving with container
 -f       print out logs once container is running
 -c       SSL certificate
 -k       SSL certificate key
+-p       SSL password file
 -n       don't tamper with config files
 ```
 
