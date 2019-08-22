@@ -236,12 +236,12 @@ function confirm() {
 function check_names() {
 	local name="$1"
 
-	local container="$(          \
-		sudo docker container ls \
-		| tail -n +2             \
-		| awk '{print $2}'       \
-		| grep "$name"           \
-	)"                           ;
+	local container="$(             \
+		sudo docker container ls -a \
+		| tail -n +2                \
+		| awk '{print $2}'          \
+		| grep "$name"              \
+	)"                              ;
 
 	local image="$(          \
 		sudo docker image ls \
