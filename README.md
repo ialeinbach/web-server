@@ -1,5 +1,11 @@
 This repo contains the requisite ingredients for a web-serving Docker container
-plus a helpful wizard.
+(plus a helpful wizard). It's intended to be a good starting point for anyone
+looking to host a simple website. I built it to satisfy my own self-hosting
+needs: [my personal website](https://ian.leinbach.me).
+
+### Requirements
+
+The only thing you'll need is Docker up and running properly.
 
 ### The Server
 
