@@ -89,7 +89,6 @@ function wizard() {
 	case "$mode" in
 		serve) mode_serve "$name" ;;
 		probe) mode_probe "$name" ;;
-		clean) mode_clean "$name" ;;
 		*)
 			panic "unrecognized mode: $mode"
 		;;
