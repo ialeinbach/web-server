@@ -43,7 +43,8 @@ COPY --chown=supervisor:www-data etc/    /etc/
 COPY --chown=nginx:www-data      static/ /static/
 COPY --chown=uwsgi:www-data      code/   /code/
 
-RUN chown root:root /etc/ssl/*.{key,crt}
+RUN chown root:root /etc/ssl/*.{key,crt} \
+ && chmod 400 /etc/ssl/*.{key,crt}       ;
 
 RUN echo -n nginx uwsgi              \
   | xargs -d ' ' -I %                \
