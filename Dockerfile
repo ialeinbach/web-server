@@ -43,8 +43,15 @@ COPY --chown=supervisor:www-data etc/    /etc/
 COPY --chown=nginx:www-data      static/ /static/
 COPY --chown=uwsgi:www-data      code/   /code/
 
-RUN chown root:root /etc/ssl/*.{key,crt,pass} \
- && chmod 400 /etc/ssl/*.{key,crt,pass}       ;
+RUN find /etc/ssl/ -name '*.key'     \
+      -exec chown -f root:root {} \; \
+      -exec chmod -f 400       {} \; \
+ && find /etc/ssl/ -name '*.crt'     \
+      -exec chown -f root:root {} \; \
+      -exec chmod -f 400       {} \; \
+ && find /etc/ssl/ -name '*.pass'    \
+      -exec chown -f root:root {} \; \
+      -exec chmod -f 400       {} \; ;
 
 RUN echo -n nginx uwsgi              \
   | xargs -d ' ' -I %                \
