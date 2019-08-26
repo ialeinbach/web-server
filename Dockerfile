@@ -56,6 +56,6 @@ RUN find /static                           -type d -exec chmod 555 {} \; \
  && find /etc/{supervisor,nginx,uwsgi}     -type d -exec chmod 555 {} \; \
  && find /etc/{supervisor,nginx,uwsgi}     -type f -exec chmod 444 {} \; \
  && find /var/log/{supervisor,nginx,uwsgi} -type d -exec chmod 555 {} \; \
- && find /var/log/{supervisor,nginx,uwsgi} -type f -exec chmod 766 {} \; ;
+ && find /var/log/{supervisor,nginx,uwsgi} -type f -exec chmod 664 {} \; ;
 
 ENTRYPOINT ["supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
