@@ -5,22 +5,38 @@ needs: [my personal website](https://ian.leinbach.me).
 
 ### Requirements
 
-The only thing you'll need is Docker up and running properly.
+First and foremost, you'll need Docker up and running -- this is a docker
+container after all. If your distro uses systemd, try `systemctl status
+docker.service`.
+
+Next, you'll need an SSL certificate and key to serve HTTPS. For development,
+you can generate a self-signed certificate:
+
+```
+openssl req -x509 -newkey rsa:4096 -keyout ___.key -out ___.crt
+```
+
+In the process of making your certificate and key, it may ask you for a
+passphrase, which you will then need to put in a file as well. Simply:
+
+```
+echo "ThisIsMyPassphrase" > ___.pass
+```
+
+These three files (key, certificate, and password file) correspond to the `-k`,
+`-c`, and `-p` flags of `wizard.sh`. The script won't itself fail without them,
+but Nginx will fail to start as it expects them to be configured properly.
 
 ### The Server
 
-Every directory in this repo is recursively copied into a top-level directory in
-the container with the same name. So, for example: `static/` here becomes
+Every directory in this repo is recursively copied into the container as a
+top-level directory with the same name. So, for example: `static/` here becomes
 `/static` in the container.
 
 The server will serve requests statically when possible (i.e. when the requested
 file can be found in `/static`). Otherwise, the request is forwarded to a
 WSGI-compliant backend whose application object must lie in the file
 `/code/backend/wsgi.py`. This could be something like Flask or Django.
-
-The server is configured by default for HTTP and HTTPS. It therefore requires
-both SSL certificate and key to properly work. These can be provided with the
-`-c` and `-k` flags of the wizard script: `wizard.sh`.
 
 ### The Script
 
@@ -68,5 +84,5 @@ Nginx and uWSGI logs as well (although admittedly they're a bit crowded in this
 format).
 
 Another option for looking at logs is to observe the volume holding the logs on
-the host which is somewhere in `/var/lib/docker/volumes` depending on the name
-you gave to `wizard.sh`.
+the host which is somewhere in `/var/lib/docker/volumes/SERVER_NAME/_data` where
+SERVER_NAME is the name given to `wizard.sh`.
