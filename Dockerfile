@@ -7,14 +7,14 @@ EXPOSE 80/tcp 443/tcp
 
 SHELL ["/bin/bash", "-c"]
 
-RUN echo -n supervisor nginx uwsgi \
-  | xargs -d ' ' -I %              \
-      useradd                      \
-        --system                   \
-        --no-create-home           \
-        --shell /bin/false         \
-        --gid www-data             \
-        %                          ;
+RUN echo -n nginx uwsgi    \
+  | xargs -d ' ' -I %      \
+      useradd              \
+        --system           \
+        --no-create-home   \
+        --shell /bin/false \
+        --gid www-data     \
+        %                  ;
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE 1
@@ -39,19 +39,13 @@ RUN rm -rf                                    \
       /{etc,var/log}/{supervisor,nginx,uwsgi} \
       /{static,code}                          ;
 
-COPY --chown=supervisor:www-data etc/    /etc/
-COPY --chown=nginx:www-data      static/ /static/
-COPY --chown=uwsgi:www-data      code/   /code/
+COPY --chown=root:root      etc/    /etc/
+COPY --chown=nginx:www-data static/ /static/
+COPY --chown=uwsgi:www-data code/   /code/
 
-RUN find /etc/ssl/ -name '*.key'     \
-      -exec chown -f root:root {} \; \
-      -exec chmod -f 400       {} \; \
- && find /etc/ssl/ -name '*.crt'     \
-      -exec chown -f root:root {} \; \
-      -exec chmod -f 400       {} \; \
- && find /etc/ssl/ -name '*.pass'    \
-      -exec chown -f root:root {} \; \
-      -exec chmod -f 400       {} \; ;
+RUN find /etc/ssl/ -name '*.key'  -exec chmod -f 400 {} \; \
+ && find /etc/ssl/ -name '*.crt'  -exec chmod -f 400 {} \; \
+ && find /etc/ssl/ -name '*.pass' -exec chmod -f 400 {} \; ;
 
 RUN echo -n nginx uwsgi              \
   | xargs -d ' ' -I %                \
