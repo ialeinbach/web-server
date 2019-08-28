@@ -19,7 +19,7 @@ function usage() {
 	echo "| Modes |"
 	echo "'-------'"
 	echo
-	echo "probe    spin up and open bash prompt into container"
+	echo "probe    open a bash prompt into a running container"
 	echo "serve    spin up and start serving with container"
 	echo
 	echo ".---------."
@@ -63,36 +63,28 @@ function wizard() {
 	local mode="$1"
 	local name="$2"
 
+	if [[ $mode == "probe" ]]; then
+		mode_probe "$name"
+		exit 0
+	fi
+
 	# Before touching anything, make sure we're not about to step on anyone
 	# else's toes.
-	case "$mode" in
-		serve|probe)
-			task "Checking for name collisions" \
-				check_names "$name"             ;
-		;;
-	esac
+	task "Checking for name collisions" \
+		check_names "$name"             ;
 
 	# If -n flag is provided, leave the config files alone.
 	if [[ $no_config -ne 1 ]]; then
-		case "$mode" in
-			serve|probe)
-				task "Configuring server name" \
-					config_server_name "$name" ;
+		task "Configuring server name" \
+			config_server_name "$name" ;
 
-				task "Configuring SSL"                \
-					config_ssl "$cert" "$key" "$pass" ;
-			;;
-		esac
+		task "Configuring SSL"                \
+			config_ssl "$cert" "$key" "$pass" ;
 	fi
 
-	# Dispatch to the mode functions.
-	case "$mode" in
-		serve) mode_serve "$name" ;;
-		probe) mode_probe "$name" ;;
-		*)
-			panic "unrecognized mode: $mode"
-		;;
-	esac
+	[[ $mode != "serve" ]] && panic "unrecognized mode: $mode"
+
+	mode_serve "$name"
 
 	# If -f flag is provided, print out logs as they're generated.
 	[[ $follow -eq 1 ]] && sudo docker logs --follow "$name"
@@ -128,22 +120,11 @@ function mode_serve() {
 function mode_probe() {
 	local name="$1"
 
-	task "Building image"        \
-		sudo docker image build  \
-			--tag "$name":latest \
-			.                    ;
-
-	task "Creating log volume" sudo docker volume create "$name"
-
-	task "Creating and entering container"              \
-		sudo docker container run                       \
-			--name "$name"                              \
-			--publish 80:80                             \
-			--publish 443:443                           \
-			--interactive --tty                         \
-			--entrypoint /bin/bash                      \
-			--mount source="$name",destination=/var/log \
-			"$name":latest                              ;
+	task "Entering container"   \
+		sudo docker exec        \
+			--interactive --tty \
+			"$name"             \
+			/bin/bash           ;
 }
 
 #

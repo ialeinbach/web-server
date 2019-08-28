@@ -52,7 +52,7 @@ $ ./wizard.sh -h
 | Modes |
 '-------'
 
-probe    spin up and open bash prompt into container
+probe    open a bash prompt into a running container
 serve    spin up and start serving with container
 
 .---------.
